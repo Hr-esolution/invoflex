@@ -5,7 +5,7 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\FactureParametreController;
 use App\Http\Controllers\FactureController;
 use App\Http\Controllers\ProduitController;
-use App\Http\Controllers\GoogleDriveController;
+
 
 
 
@@ -70,8 +70,3 @@ Route::resource('produits', ProduitController::class);
 
 
 
-Route::middleware('auth')->group(function () {
-    Route::get('/google-drive/connect', [GoogleDriveController::class, 'connect'])->name('google.drive.connect');
-    Route::get('/google-drive/callback', [GoogleDriveController::class, 'callback'])->name('google.drive.callback');
-    Route::post('/factures/{facture}/save-to-drive', [FactureController::class, 'saveToDrive'])->name('factures.save-to-drive');
-});
