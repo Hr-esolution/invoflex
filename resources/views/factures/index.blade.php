@@ -70,14 +70,34 @@
 </a>
 <!-- Google Drive -->
 @if(auth()->user()->google_drive_token)
+    <!-- Sauvegarder dans Google Drive (privé) -->
     <form action="{{ route('factures.save-to-drive', $facture) }}" method="POST" style="display:inline;">
         @csrf
+        <input type="hidden" name="share_type" value="private">
         <button type="submit" 
                 style="background:none; border:none; color:#4285F4; cursor:pointer; margin-right:10px;"
-                title="Sauvegarder dans Google Drive">
+                title="Sauvegarder dans Google Drive (privé)">
             <i class="fab fa-google-drive"></i>
         </button>
     </form>
+    
+    <!-- Sauvegarder et partager avec lien -->
+    <form action="{{ route('factures.save-to-drive', $facture) }}" method="POST" style="display:inline;">
+        @csrf
+        <input type="hidden" name="share_type" value="anyone_with_link">
+        <button type="submit" 
+                style="background:none; border:none; color:#34A853; cursor:pointer; margin-right:10px;"
+                title="Sauvegarder et partager publiquement">
+            <i class="fas fa-link"></i>
+        </button>
+    </form>
+    
+    <!-- Sauvegarder et partager par email -->
+    <button onclick="showShareModal({{ $facture->id }})" 
+            style="background:none; border:none; color:#EA4335; cursor:pointer; margin-right:10px;"
+            title="Sauvegarder et partager par email">
+        <i class="fas fa-envelope"></i>
+    </button>
 @else
     <a href="{{ route('google.drive.connect') }}" 
        style="color:#4285F4; margin-right:10px;" 
@@ -107,4 +127,47 @@
         </div>
     @endif
 </div>
+
+<!-- Modal pour le partage par email -->
+<div id="shareModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5); z-index:1000;">
+    <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); background: white; padding: 20px; border-radius: 8px; width: 400px; max-width: 90%;">
+        <h3>Partager la facture par email</h3>
+        <form id="shareForm" method="POST" style="margin-top: 15px;">
+            @csrf
+            <input type="hidden" name="share_type" value="specific_email">
+            <div style="margin-bottom: 15px;">
+                <label for="email" style="display: block; margin-bottom: 5px;">Adresse email du destinataire:</label>
+                <input type="email" id="email" name="email" required style="width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 4px;">
+            </div>
+            <div style="text-align: right;">
+                <button type="button" onclick="hideShareModal()" style="margin-right: 10px; padding: 8px 15px; background: #6c757d; color: white; border: none; border-radius: 4px; cursor: pointer;">Annuler</button>
+                <button type="submit" style="padding: 8px 15px; background: #28a745; color: white; border: none; border-radius: 4px; cursor: pointer;">Partager</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+    let currentFactureId = null;
+
+    function showShareModal(factureId) {
+        currentFactureId = factureId;
+        const form = document.getElementById('shareForm');
+        form.action = `/factures/${factureId}/save-to-drive`;
+        document.getElementById('shareModal').style.display = 'block';
+    }
+
+    function hideShareModal() {
+        document.getElementById('shareModal').style.display = 'none';
+        document.getElementById('email').value = '';
+    }
+
+    // Fermer le modal si on clique en dehors
+    window.onclick = function(event) {
+        const modal = document.getElementById('shareModal');
+        if (event.target === modal) {
+            hideShareModal();
+        }
+    }
+</script>
 @endsection
