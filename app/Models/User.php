@@ -24,9 +24,6 @@ class User extends Authenticatable
     'password',
     'role', 
     'lang',   
-     'google_drive_token',
-    'google_drive_refresh_token',
-    'google_drive_token_expires_at',       // ← ajouté
 ];
     // Accesseurs pratiques
     public function isAdmin(): bool

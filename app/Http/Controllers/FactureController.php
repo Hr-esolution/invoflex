@@ -9,9 +9,7 @@ use Illuminate\Http\Request;
 use Barryvdh\DomPDF\Facade\Pdf;
     use App\Mail\FactureEnvoyee;
 use Illuminate\Support\Facades\Mail;
-use Google\Client;
-use Google\Service\Drive as DriveService;
-use Google\Service\Drive\DriveFile;
+
 class FactureController extends Controller
 {
 
@@ -228,93 +226,6 @@ public function printable($id)
 }
 
 
-// Dans FactureController.php
 
-
-
-public function saveToDrive(Request $request, Facture $facture)
-{
-    if ($facture->user_id !== auth()->id()) {
-        abort(403);
-    }
-
-    $user = auth()->user();
-    if (! $user->google_drive_token) {
-        return back()->withErrors('Veuillez d’abord connecter votre compte Google Drive.');
-    }
-
-    // Vérifier si le token est expiré
-    if ($user->google_drive_token_expires_at->isPast()) {
-        // Refresh le token
-        $client = new Client();
-        $client->setClientId(env('GOOGLE_DRIVE_CLIENT_ID'));
-        $client->setClientSecret(env('GOOGLE_DRIVE_CLIENT_SECRET'));
-        $newToken = $client->fetchAccessTokenWithRefreshToken($user->google_drive_refresh_token);
-
-        $user->update([
-            'google_drive_token' => $newToken['access_token'],
-            'google_drive_token_expires_at' => now()->addSeconds($newToken['expires_in']),
-        ]);
-    }
-
-    // Générer le PDF
-    $pdf = \\Barryvdh\\DomPDF\\Facade\\Pdf::loadView(
-        $facture->template?->chemin_blade ?? 'factures.templates.standard',
-        ['facture' => $facture->load('user.emetteur')]
-    );
-
-    // Uploader dans Google Drive
-    $client = new Client();
-    $client->setAccessToken($user->google_drive_token);
-
-    $driveService = new DriveService($client);
-    
-    // Créer le fichier dans Google Drive
-    $fileMetadata = new DriveFile([
-        'name' => "facture_{$facture->id}.pdf",
-        'mimeType' => 'application/pdf',
-    ]);
-
-    $content = $pdf->output();
-    $stream = fopen('php://memory', 'r+');
-    fwrite($stream, $content);
-    rewind($stream);
-
-    $file = $driveService->files->create($fileMetadata, [
-        'data' => $stream,
-        'mimeType' => 'application/pdf',
-        'uploadType' => 'multipart',
-        'fields' => 'id,webViewLink,webContentLink'
-    ]);
-
-    fclose($stream);
-
-    // Déterminer le type de partage demandé
-    $shareType = $request->input('share_type', 'private'); // private, anyone_with_link, or specific_email
-
-    if ($shareType === 'anyone_with_link') {
-        // Partager avec n'importe qui ayant le lien
-        $driveService->permissions->create($file->id, new \\Google\\Service\\Drive\\Permission([
-            'type' => 'anyone',
-            'role' => 'reader'
-        ]));
-        
-        $message = 'Facture sauvegardée et partagée publiquement dans Google Drive !';
-    } elseif ($shareType === 'specific_email' && $request->filled('email')) {
-        // Partager avec une adresse email spécifique
-        $driveService->permissions->create($file->id, new \\Google\\Service\\Drive\\Permission([
-            'type' => 'user',
-            'role' => 'reader',
-            'emailAddress' => $request->email
-        ]));
-        
-        $message = 'Facture sauvegardée et partagée avec ' . $request->email . ' dans Google Drive !';
-    } else {
-        // Fichier privé par défaut
-        $message = 'Facture sauvegardée dans votre Google Drive !';
-    }
-
-    return back()->with('success', $message);
-}
 
 }

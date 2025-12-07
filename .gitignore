@@ -1,93 +1,42 @@
 ```
-# Backup files
-*.bak
+# Dependency directories
+vendor/
+node_modules/
 
-# Logs and temp files
-*.log
-*.tmp
-*.swp
-
-# Environment
+# Environment files
 .env
 .env.local
 .env.*
 
-# Editors
+# IDE files
 .vscode/
 .idea/
+*.swp
+*.swo
 
-# Dependencies
-node_modules/
-vendor/
-composer.lock
+# Logs
+*.log
 
-# Build artifacts
-dist/
-build/
-*.o
-*.obj
-*.exe
-*.dll
-*.so
-*.a
-*.out
+# Temporary files
+*.tmp
 
-# Python
+# OS files
+.DS_Store
+Thumbs.db
+
+# Cache directories
 __pycache__/
 *.pyc
 *.pyo
 *.pyd
-.Python
-env/
-venv/
-.venv/
-pip-log.txt
-pip-delete-this-directory.txt
-.tox/
+
+# Build artifacts
+dist/
+build/
+target/
+coverage/
+htmlcov/
 .coverage
-.coverage.*
-.cache
-nosetests.xml
-coverage.xml
-*.cover
-*.log
-.git/modules/
-git-submodule/
-.DS_Store
-Thumbs.db
-
-# PHP
-*.phar
-*.pid
-*.swp
-*.swo
-*.tmp
-*.log
-composer.lock
-vendor/
-node_modules/
-
-# Laravel specific
-bootstrap/cache/
-bootstrap/cache/*
-storage/
-storage/logs/
-storage/framework/
-storage/framework/cache/
-storage/framework/sessions/
-storage/framework/views/
-public/storage
-.env.*
-
-# Compiled and build artifacts
-*.class
-*.o
-*.obj
-*.exe
-*.dll
-*.so
-*.a
-*.out
 
 # Compressed files
 *.zip
@@ -108,8 +57,4 @@ public/storage
 *.Z
 *.lz
 *.lzo
-*.tar.gz
-*.tar.bz2
-*.tar.xz
-*.tar.zst
 ```
