@@ -1,0 +1,27 @@
+<?php
+
+return [
+    'title' => 'Gestion des Utilisateurs',
+    'list' => 'Liste des Utilisateurs',
+    'create' => 'Créer un Utilisateur',
+    'edit' => 'Modifier l\'Utilisateur',
+    'name' => 'Nom',
+    'email' => 'Email',
+    'phone' => 'Téléphone',
+    'role' => 'Rôle',
+    'actions' => 'Actions',
+    'add_new' => 'Ajouter un nouvel utilisateur',
+    'save' => 'Enregistrer',
+    'update' => 'Mettre à jour',
+    'delete' => 'Supprimer',
+    'back_to_list' => 'Retour à la liste',
+    'success_created' => 'Utilisateur créé avec succès',
+    'success_updated' => 'Utilisateur mis à jour avec succès',
+    'success_deleted' => 'Utilisateur supprimé avec succès',
+    'confirm_delete' => 'Êtes-vous sûr de vouloir supprimer cet utilisateur ?',
+    'admin' => 'Administrateur',
+    'user' => 'Utilisateur',
+    'password' => 'Mot de passe',
+    'password_confirmation' => 'Confirmation du mot de passe',
+    'leave_blank_if_no_change' => 'Laissez vide si vous ne souhaitez pas changer le mot de passe',
+];

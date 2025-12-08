@@ -1,60 +1,75 @@
-@extends('layouts.app')
+@extends('layouts.main')
+
+@section('title', __('champs.title'))
+
 @section('content')
-<div class="card">
-    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
-        <h1>Champs de facture</h1>
-        <a href="{{ route('admin.champs.create') }}" class="btn">+ Nouveau champ</a>
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title">{{ __('champs.list') }}</h3>
+                    <div class="card-tools">
+                        <a href="{{ route('admin.champs.create') }}" class="btn btn-primary">
+                            <i class="fas fa-plus"></i> {{ __('champs.add_new') }}
+                        </a>
+                    </div>
+                </div>
+                <!-- /.card-header -->
+                <div class="card-body table-responsive p-0">
+                    <table class="table table-hover text-nowrap">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>{{ __('champs.name') }}</th>
+                                <th>{{ __('champs.type') }}</th>
+                                <th>{{ __('champs.required') }}</th>
+                                <th>{{ __('champs.template') }}</th>
+                                <th>{{ __('champs.actions') }}</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @forelse($champs as $champ)
+                            <tr>
+                                <td>{{ $champ->id }}</td>
+                                <td>{{ $champ->name }}</td>
+                                <td>{{ $champ->type }}</td>
+                                <td>
+                                    @if($champ->required)
+                                        <span class="badge bg-success">{{ __('champs.yes') }}</span>
+                                    @else
+                                        <span class="badge bg-danger">{{ __('champs.no') }}</span>
+                                    @endif
+                                </td>
+                                <td>{{ $champ->facture_template->name ?? 'N/A' }}</td>
+                                <td>
+                                    <a href="{{ route('admin.champs.edit', $champ->id) }}" class="btn btn-sm btn-primary">
+                                        <i class="fas fa-edit"></i> {{ __('champs.edit') }}
+                                    </a>
+                                    <form action="{{ route('admin.champs.destroy', $champ->id) }}" method="POST" style="display: inline;" onsubmit="return confirm('{{ __('champs.confirm_delete') }}')">
+                                        @csrf
+                                        @method('DELETE')
+                                        <button type="submit" class="btn btn-sm btn-danger">
+                                            <i class="fas fa-trash"></i> {{ __('champs.delete') }}
+                                        </button>
+                                    </form>
+                                </td>
+                            </tr>
+                            @empty
+                            <tr>
+                                <td colspan="6" class="text-center">{{ __('champs.no_records_found') }}</td>
+                            </tr>
+                            @endforelse
+                        </tbody>
+                    </table>
+                </div>
+                <!-- /.card-body -->
+                <div class="card-footer clearfix">
+                    {{ $champs->links() }}
+                </div>
+            </div>
+            <!-- /.card -->
+        </div>
     </div>
-
-    @if(session('success'))
-        <div style="background:#d4edda; padding:12px; border-radius:6px; margin-bottom:20px;">{{ session('success') }}</div>
-    @endif
-
-    <table style="width:100%; border-collapse:collapse;">
-        <thead>
-            <tr style="background:#f8f9fa;">
-                <th style="padding:12px; text-align:left;">Code</th>
-                <th style="padding:12px; text-align:left;">Nom (FR)</th>
-                <th style="padding:12px; text-align:left;">Type</th>
-                <th style="padding:12px; text-align:left;">Description</th>
-                <th style="padding:12px; text-align:right;">Actions</th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach($champs as $champ)
-            <tr>
-                <td style="padding:12px; border-bottom:1px solid #eee;">{{ $champ->code }}</td>
-                <td style="padding:12px; border-bottom:1px solid #eee;">{{ $champ->nom_fr }}</td>
-                <td style="padding:12px; border-bottom:1px solid #eee;">
-                    @switch($champ->type)
-                        @case('text')
-                            <span class="badge" style="background:#e3f2fd; color:#1976d2; padding:4px 8px; border-radius:4px;">Texte</span>
-                            @break
-                        @case('number')
-                            <span class="badge" style="background:#e8f5e9; color:#388e3c; padding:4px 8px; border-radius:4px;">Nombre</span>
-                            @break
-                        @case('date')
-                            <span class="badge" style="background:#fff3e0; color:#f57c00; padding:4px 8px; border-radius:4px;">Date</span>
-                            @break
-                        @case('boolean')
-                            <span class="badge" style="background:#f3e5f5; color:#7b1fa2; padding:4px 8px; border-radius:4px;">Booléen</span>
-                            @break
-                        @default
-                            <span class="badge" style="background:#e0e0e0; color:#616161; padding:4px 8px; border-radius:4px;">{{ $champ->type }}</span>
-                    @endswitch
-                </td>
-                <td style="padding:12px; border-bottom:1px solid #eee;">{{ $champ->description ?? '-' }}</td>
-                <td style="padding:12px; border-bottom:1px solid #eee; text-align:right;">
-                    <a href="{{ route('admin.champs.edit', $champ) }}" style="color:#4361ee; margin-right:10px;">✏️</a>
-                    <form action="{{ route('admin.champs.destroy', $champ) }}" method="POST" style="display:inline;">
-                        @csrf @method('DELETE')
-                        <button type="submit" style="background:none; border:none; color:#dc3545; cursor:pointer;">🗑️</button>
-                    </form>
-                </td>
-            </tr>
-            @endforeach
-        </tbody>
-    </table>
-    {{ $champs->links() }}
 </div>
 @endsection
