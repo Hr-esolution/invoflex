@@ -110,6 +110,9 @@
                 <a href="{{ route('emetteur.edit') }}">Émetteur</a>
                 @if(auth()->user()->isAdmin())
                     <a href="{{ route('admin.dashboard') }}">Admin</a>
+                    <a href="{{ route('admin.users.index') }}">Utilisateurs</a>
+                    <a href="{{ route('admin.templates.index') }}">Templates</a>
+                    <a href="{{ route('admin.champs.index') }}">Champs</a>
                 @endif
             </div>
             <div class="user-info">
