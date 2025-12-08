@@ -35,6 +35,7 @@ Route::middleware('auth')->group(function () {
     // Produits
     Route::resource('produits', ProduitController::class);
     Route::get('/api/produits', [FactureController::class, 'getProduits'])->name('api.produits');
+
     
     // Paramètres de facturation
     Route::get('/parametres/facturation', [FactureParametreController::class, 'edit'])->name('facturation.parametres.edit');
@@ -51,13 +52,31 @@ Route::middleware('auth')->group(function () {
         })->name('admin.dashboard');
         
         // Gestion des templates
-        Route::resource('templates', FactureTemplateController::class)->except(['show']);
+        Route::resource('templates', FactureTemplateController::class)->except(['show'])->names([
+            'index' => 'admin.templates.index',
+            'create' => 'admin.templates.create',
+            'store' => 'admin.templates.store',
+            'edit' => 'admin.templates.edit',
+            'update' => 'admin.templates.update',
+            'destroy' => 'admin.templates.destroy',
+        ]);
         
         // Gestion des champs
-        Route::resource('champs', FactureChampController::class)->except(['show']);
+        Route::resource('champs', FactureChampController::class)->except(['show'])->names([
+            'index' => 'admin.champs.index',
+            'create' => 'admin.champs.create',
+            'store' => 'admin.champs.store',
+            'edit' => 'admin.champs.edit',
+            'update' => 'admin.champs.update',
+            'destroy' => 'admin.champs.destroy',
+        ]);
         
         // Gestion des utilisateurs
-        Route::resource('users', UserController::class)->only(['index', 'edit', 'update']);
+        Route::resource('users', UserController::class)->only(['index', 'edit', 'update'])->names([
+            'index' => 'admin.users.index',
+            'edit' => 'admin.users.edit',
+            'update' => 'admin.users.update',
+        ]);
     });
 });
 
