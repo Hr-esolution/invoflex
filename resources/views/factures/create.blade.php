@@ -69,56 +69,43 @@
                 Appliquer la TVA (20%)
             </label>
         </div>
-<div style="margin: 24px 0;">
-    <h3>Produits enregistrés</h3>
-    <button type="button" onclick="openProduitsModal()" class="btn" style="background:#17a2b8;">
-        <i class="fas fa-list"></i> Sélectionner depuis la liste
-    </button>
-</div>
 
-<!-- Modal des produits -->
-<div id="produitsModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5); z-index:1000;">
-    <div style="background:white; margin:50px auto; padding:24px; width:90%; max-width:800px; border-radius:12px; max-height:80vh; overflow:auto;">
-        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px;">
-            <h3>Choisir un produit</h3>
-            <button onclick="closeProduitsModal()" style="background:#dc3545; color:white; border:none; width:32px; height:32px; border-radius:50%;">✕</button>
+        <!-- Bouton produits -->
+        <div style="margin: 24px 0;">
+            <h3>Produits enregistrés</h3>
+            <button type="button" onclick="openProduitsModal()" class="btn" style="background:#17a2b8;">
+                <i class="fas fa-list"></i> Sélectionner depuis la liste
+            </button>
         </div>
-        <div id="liste-produits" style="display:grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap:12px;">
-            <!-- Chargé via AJAX -->
+
+        <!-- Modal produits -->
+        <div id="produitsModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5); z-index:1000;">
+            <div style="background:white; margin:50px auto; padding:24px; width:90%; max-width:800px; border-radius:12px; max-height:80vh; overflow:auto;">
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px;">
+                    <h3>Choisir un produit</h3>
+                    <button onclick="closeProduitsModal()" style="background:#dc3545; color:white; border:none; width:32px; height:32px; border-radius:50%;">✕</button>
+                </div>
+                <div id="liste-produits" style="display:grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap:12px;">
+                    <!-- Chargé via AJAX -->
+                </div>
+            </div>
         </div>
-    </div>
-</div>
+
         <!-- Lignes de facture -->
         <div style="margin: 24px 0;">
             <h3>Produits</h3>
             <div id="lignes-facture">
-                <!-- Ligne initiale -->
                 <div class="ligne" style="display: grid; grid-template-columns: 2fr 3fr 1fr 1fr 1fr 40px; gap:10px; margin-bottom:12px; align-items:end;">
-                    <div>
-                        <label>Nom produit</label>
-                        <input type="text" name="lignes[0][plat]" required style="width:100%; padding:8px; border:1px solid #ced4da; border-radius:4px;">
-                    </div>
-                    <div>
-                        <label>Désignation</label>
-                        <input type="text" name="lignes[0][designation]" style="width:100%; padding:8px; border:1px solid #ced4da; border-radius:4px;">
-                    </div>
-                    <div>
-                        <label>Qté</label>
-                        <input type="number" name="lignes[0][quantite]" value="1" min="1" required style="width:100%; padding:8px; border:1px solid #ced4da; border-radius:4px;">
-                    </div>
-                    <div>
-                        <label>P.U. (DH)</label>
-                        <input type="number" step="0.01" name="lignes[0][prix_unitaire]" required style="width:100%; padding:8px; border:1px solid #ced4da; border-radius:4px;">
-                    </div>
-                    <div>
-                        <label>Total</label>
-                        <input type="text" readonly style="width:100%; padding:8px; border:1px solid #ced4da; border-radius:4px; background:#f8f9fa;">
-                    </div>
+                    <div><input type="text" name="lignes[0][plat]" required placeholder="Nom du produit" style="width:100%; padding:8px; border:1px solid #ced4da; border-radius:4px;"></div>
+                    <div><input type="text" name="lignes[0][designation]" placeholder="Désignation" style="width:100%; padding:8px; border:1px solid #ced4da; border-radius:4px;"></div>
+                    <div><input type="number" name="lignes[0][quantite]" value="1" min="1" required style="width:100%; padding:8px; border:1px solid #ced4da; border-radius:4px;"></div>
+                    <div><input type="number" step="0.01" name="lignes[0][prix_unitaire]" required placeholder="0.00" style="width:100%; padding:8px; border:1px solid #ced4da; border-radius:4px;"></div>
+                    <div><input type="text" readonly style="width:100%; padding:8px; border:1px solid #ced4da; border-radius:4px; background:#f8f9fa;"></div>
                     <button type="button" onclick="removeLigne(this)" style="background:#dc3545; color:white; border:none; border-radius:4px; height:36px;">✕</button>
                 </div>
             </div>
             <button type="button" onclick="addLigne()" style="background:#28a745; color:white; border:none; padding:8px 16px; border-radius:6px; margin-top:10px;">
-                + Ajouter un produit
+                + Ajouter un produit manuellement
             </button>
         </div>
 
@@ -134,10 +121,10 @@ function addLigne() {
     const index = container.children.length;
     const template = `
         <div class="ligne" style="display: grid; grid-template-columns: 2fr 3fr 1fr 1fr 1fr 40px; gap:10px; margin-bottom:12px; align-items:end;">
-            <div><input type="text" name="lignes[${index}][plat]" required style="width:100%; padding:8px; border:1px solid #ced4da; border-radius:4px;"></div>
-            <div><input type="text" name="lignes[${index}][designation]" style="width:100%; padding:8px; border:1px solid #ced4da; border-radius:4px;"></div>
+            <div><input type="text" name="lignes[${index}][plat]" required placeholder="Nom du produit" style="width:100%; padding:8px; border:1px solid #ced4da; border-radius:4px;"></div>
+            <div><input type="text" name="lignes[${index}][designation]" placeholder="Désignation" style="width:100%; padding:8px; border:1px solid #ced4da; border-radius:4px;"></div>
             <div><input type="number" name="lignes[${index}][quantite]" value="1" min="1" required style="width:100%; padding:8px; border:1px solid #ced4da; border-radius:4px;"></div>
-            <div><input type="number" step="0.01" name="lignes[${index}][prix_unitaire]" required style="width:100%; padding:8px; border:1px solid #ced4da; border-radius:4px;"></div>
+            <div><input type="number" step="0.01" name="lignes[${index}][prix_unitaire]" required placeholder="0.00" style="width:100%; padding:8px; border:1px solid #ced4da; border-radius:4px;"></div>
             <div><input type="text" readonly style="width:100%; padding:8px; border:1px solid #ced4da; border-radius:4px; background:#f8f9fa;"></div>
             <button type="button" onclick="removeLigne(this)" style="background:#dc3545; color:white; border:none; border-radius:4px; height:36px;">✕</button>
         </div>`;
@@ -149,8 +136,7 @@ function removeLigne(button) {
         button.closest('.ligne').remove();
     }
 }
-</script>
-<script>
+
 function openProduitsModal() {
     document.getElementById('produitsModal').style.display = 'block';
     fetch("{{ route('api.produits') }}")

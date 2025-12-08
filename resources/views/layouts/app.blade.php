@@ -107,6 +107,7 @@
                 <a href="{{ route('factures.index') }}">Mes Factures</a>
                  <a href="{{ route('produits.index') }}">Produits</a>
                 <a href="{{ route('facturation.parametres') }}">Paramètres</a>
+                <a href="{{ route('emetteur.edit') }}">Émetteur</a>
                 @if(auth()->user()->isAdmin())
                     <a href="{{ route('admin.dashboard') }}">Admin</a>
                 @endif

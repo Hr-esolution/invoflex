@@ -5,15 +5,14 @@ namespace App\Http\Controllers;
 use App\Models\Facture;
 use App\Models\FactureTemplate;
 use App\Models\FactureChamp;
+use App\Models\Produit;
 use Illuminate\Http\Request;
 use Barryvdh\DomPDF\Facade\Pdf;
-    use App\Mail\FactureEnvoyee;
+use App\Mail\FactureEnvoyee;
 use Illuminate\Support\Facades\Mail;
 
 class FactureController extends Controller
 {
-
-
     public function index()
     {
         $factures = auth()->user()->factures()->latest()->paginate(10);
@@ -47,19 +46,25 @@ class FactureController extends Controller
             'client_nom' => 'required|string|max:255',
             'template_id' => 'nullable|exists:facture_templates,id',
             'lignes' => 'required|array|min:1',
-            'lignes.*.quantite' => 'required|integer|min=1',
-            'lignes.*.prix_unitaire' => 'required|numeric|min=0',
+            'lignes.*.quantite' => 'required|integer|min:1',
+            'lignes.*.prix_unitaire' => 'required|numeric|min:0',
         ];
 
         foreach ($champsActifs as $code) {
-            $rules["valeurs_champs.{$code}"] = 'nullable|string|max=255';
+            $rules["valeurs_champs.{$code}"] = 'nullable|string|max:255';
         }
 
         $data = $request->validate($rules);
 
+        // 🔒 Sécuriser les lignes
         $lignes = collect($data['lignes'])->map(function ($ligne) {
-            $ligne['sous_total'] = $ligne['quantite'] * $ligne['prix_unitaire'];
-            return $ligne;
+            return [
+                'plat' => $ligne['plat'] ?? 'Produit non nommé',
+                'designation' => $ligne['designation'] ?? '',
+                'quantite' => $ligne['quantite'] ?? 1,
+                'prix_unitaire' => $ligne['prix_unitaire'] ?? 0,
+                'sous_total' => ($ligne['quantite'] ?? 1) * ($ligne['prix_unitaire'] ?? 0),
+            ];
         });
 
         $totalHT = $lignes->sum('sous_total');
@@ -83,15 +88,6 @@ class FactureController extends Controller
 
         return redirect()->route('factures.index')
                          ->with('success', 'Facture créée avec succès.');
-    }
-
-    public function show(Facture $facture)
-    {
-        if ($facture->user_id !== auth()->id()) {
-            abort(403);
-        }
-        // Optionnel : vue détail (tu peux la créer si besoin)
-        return view('factures.show', compact('facture'));
     }
 
     public function edit(Facture $facture)
@@ -121,22 +117,28 @@ class FactureController extends Controller
         $champsActifs = $parametre?->champs_actifs ?? [];
 
         $rules = [
-            'client_nom' => 'required|string|max=255',
+            'client_nom' => 'required|string|max:255',
             'template_id' => 'nullable|exists:facture_templates,id',
-            'lignes' => 'required|array|min=1',
-            'lignes.*.quantite' => 'required|integer|min=1',
-            'lignes.*.prix_unitaire' => 'required|numeric|min=0',
+            'lignes' => 'required|array|min:1',
+            'lignes.*.quantite' => 'required|integer|min:1',
+            'lignes.*.prix_unitaire' => 'required|numeric|min:0',
         ];
 
         foreach ($champsActifs as $code) {
-            $rules["valeurs_champs.{$code}"] = 'nullable|string|max=255';
+            $rules["valeurs_champs.{$code}"] = 'nullable|string|max:255';
         }
 
         $data = $request->validate($rules);
 
-        $lignes = collect($data['lignes'])->map(fn($l) => $l + [
-            'sous_total' => $l['quantite'] * $l['prix_unitaire']
-        ]);
+        $lignes = collect($data['lignes'])->map(function ($ligne) {
+            return [
+                'plat' => $ligne['plat'] ?? 'Produit non nommé',
+                'designation' => $ligne['designation'] ?? '',
+                'quantite' => $ligne['quantite'] ?? 1,
+                'prix_unitaire' => $ligne['prix_unitaire'] ?? 0,
+                'sous_total' => ($ligne['quantite'] ?? 1) * ($ligne['prix_unitaire'] ?? 0),
+            ];
+        });
 
         $totalHT = $lignes->sum('sous_total');
         $tva = !empty($data['tva_applicable']) ? $totalHT * 0.20 : 0;
@@ -160,72 +162,70 @@ class FactureController extends Controller
                          ->with('success', 'Facture mise à jour avec succès.');
     }
 
+    // ✅ Nouvelle méthode : liste produits JSON
+    public function getProduits()
+    {
+        $produits = auth()->user()->produits()
+            ->where('actif', true)
+            ->select('id', 'nom', 'designation', 'prix_unitaire')
+            ->get();
+
+        return response()->json($produits);
+    }
+
     public function destroy(Facture $facture)
     {
         if ($facture->user_id !== auth()->id()) {
             abort(403);
         }
-
         $facture->delete();
         return redirect()->route('factures.index')
                          ->with('success', 'Facture supprimée avec succès.');
     }
 
-   public function facturePdf($id)
-{
-    $facture = Facture::with(['template', 'user.emetteur'])->findOrFail($id);
-    $cheminTemplate = $facture->template?->chemin_blade ?? 'factures.templates.standard';
-    // Sauvegarder la langue actuelle
-$locale = app()->getLocale();
+    public function facturePdf($id)
+    {
+        $facture = Facture::with(['template', 'user.emetteur'])->findOrFail($id);
+        $cheminTemplate = $facture->template?->chemin_blade ?? 'factures.templates.standard';
 
-// Appliquer la langue de l'utilisateur
-app()->setLocale($facture->user->lang ?? 'fr');
+        $locale = app()->getLocale();
+        app()->setLocale($facture->user->lang ?? 'fr');
 
-// Générer le PDF
-$pdf = Pdf::loadView($cheminTemplate, compact('facture'));
+        $pdf = Pdf::loadView($cheminTemplate, compact('facture'));
+        app()->setLocale($locale);
 
-// Restaurer la langue
-app()->setLocale($locale);
-    return $pdf->stream("facture_{$facture->id}.pdf");
-}
+        return $pdf->stream("facture_{$facture->id}.pdf");
+    }
 
     public function duplicate(Facture $facture)
     {
         if ($facture->user_id !== auth()->id()) {
             abort(403);
         }
-
         $nouvelle = $facture->replicate();
         $nouvelle->created_at = now();
         $nouvelle->save();
-
         return redirect()->route('factures.edit', $nouvelle)
                          ->with('success', 'Facture dupliquée avec succès.');
     }
+
     public function envoyerEmail(Facture $facture)
-{
-    if ($facture->user_id !== auth()->id()) {
-        abort(403);
+    {
+        if ($facture->user_id !== auth()->id()) {
+            abort(403);
+        }
+        if (! $facture->client_email) {
+            return back()->withErrors('L’adresse email du client est requise.');
+        }
+        Mail::to($facture->client_email)->send(new FactureEnvoyee($facture));
+        return back()->with('success', 'Facture envoyée par email avec succès.');
     }
 
-    if (! $facture->client_email) {
-        return back()->withErrors('L’adresse email du client est requise.');
+    public function printable($id)
+    {
+        $facture = Facture::with(['template', 'user.emetteur'])->findOrFail($id);
+        $chemin = $facture->template?->chemin_blade ?? 'factures.templates.standard';
+        $cheminPrint = str_replace('pdf', 'print', $chemin);
+        return view($cheminPrint, compact('facture'));
     }
-
-    Mail::to($facture->client_email)->send(new FactureEnvoyee($facture));
-
-    return back()->with('success', 'Facture envoyée par email avec succès.');
-}
-public function printable($id)
-{
-    $facture = Facture::with(['template', 'user.emetteur'])->findOrFail($id);
-    $chemin = $facture->template?->chemin_blade ?? 'factures.templates.standard';
-    // Remplacer "pdf" par "print"
-    $cheminPrint = str_replace('pdf', 'print', $chemin);
-    return view($cheminPrint, compact('facture'));
-}
-
-
-
-
 }
