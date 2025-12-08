@@ -1,32 +1,52 @@
-```gitignore
+```
 # Compiled and build artifacts
 *.pyc
 __pycache__/
+*.o
+*.obj
+dist/
+build/
+target/
 
 # Dependencies
 node_modules/
-vendor/
+venv/
+.venv/
+.env
+.env.local
+*.env.*
 
 # Logs and temp files
 *.log
 *.tmp
 *.swp
 
-# Environment
-.env
-.env.local
-.env.*
-
 # Editors
 .vscode/
 .idea/
+
+# OS generated files
+.DS_Store
+Thumbs.db
 
 # Coverage reports
 coverage/
 htmlcov/
 .coverage
 
-# OS generated files
-.DS_Store
-Thumbs.db
+# Python specific
+*.pyc
+__pycache__/
+*.pyo
+*.pyd
+.Python
+*.so
+
+# Testing
+.pytest_cache/
+.mypy_cache/
+
+# Laravel/PHP specific
+/storage/
+/bootstrap/cache/
 ```

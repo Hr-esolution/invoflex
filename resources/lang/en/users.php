@@ -1,0 +1,27 @@
+<?php
+
+return [
+    'title' => 'Users Management',
+    'list' => 'Users List',
+    'create' => 'Create User',
+    'edit' => 'Edit User',
+    'name' => 'Name',
+    'email' => 'Email',
+    'phone' => 'Phone',
+    'role' => 'Role',
+    'actions' => 'Actions',
+    'add_new' => 'Add New User',
+    'save' => 'Save',
+    'update' => 'Update',
+    'delete' => 'Delete',
+    'back_to_list' => 'Back to List',
+    'success_created' => 'User created successfully',
+    'success_updated' => 'User updated successfully',
+    'success_deleted' => 'User deleted successfully',
+    'confirm_delete' => 'Are you sure you want to delete this user?',
+    'admin' => 'Administrator',
+    'user' => 'User',
+    'password' => 'Password',
+    'password_confirmation' => 'Password Confirmation',
+    'leave_blank_if_no_change' => 'Leave blank if you do not want to change the password',
+];

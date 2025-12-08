@@ -1,65 +1,75 @@
-@extends('layouts.app')
+@extends('layouts.main')
+
+@section('title', __('champs.create'))
+
 @section('content')
-<div class="card">
-    <h1>Ajouter un nouveau champ</h1>
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title">{{ __('champs.create') }}</h3>
+                </div>
+                <div class="card-body">
+                    <form method="POST" action="{{ route('admin.champs.store') }}">
+                        @csrf
 
-    <form method="POST" action="{{ route('admin.champs.store') }}">
-        @csrf
+                        <div class="form-group">
+                            <label for="code" class="form-label">{{ __('champs.code') }} *</label>
+                            <input type="text" name="code" id="code" value="{{ old('code') }}" 
+                                   class="form-control" required>
+                            @error('code')
+                                <div class="text-danger">{{ $message }}</div>
+                            @enderror
+                        </div>
 
-        <div style="margin-bottom: 20px;">
-            <label style="display: block; margin-bottom: 8px; font-weight: 600;">Code *</label>
-            <input type="text" name="code" value="{{ old('code') }}" 
-                   style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 6px;"
-                   required>
-            @error('code')
-                <div style="color: #dc3545; margin-top: 4px;">{{ $message }}</div>
-            @enderror
+                        <div class="form-group">
+                            <label for="nom_fr" class="form-label">{{ __('champs.name_fr') }} *</label>
+                            <input type="text" name="nom_fr" id="nom_fr" value="{{ old('nom_fr') }}" 
+                                   class="form-control" required>
+                            @error('nom_fr')
+                                <div class="text-danger">{{ $message }}</div>
+                            @enderror
+                        </div>
+
+                        <div class="form-group">
+                            <label for="nom_en" class="form-label">{{ __('champs.name_en') }}</label>
+                            <input type="text" name="nom_en" id="nom_en" value="{{ old('nom_en') }}" 
+                                   class="form-control">
+                            @error('nom_en')
+                                <div class="text-danger">{{ $message }}</div>
+                            @enderror
+                        </div>
+
+                        <div class="form-group">
+                            <label for="type" class="form-label">{{ __('champs.type') }} *</label>
+                            <select name="type" id="type" class="form-control" required>
+                                <option value="">{{ __('champs.select_type') }}</option>
+                                <option value="text" {{ old('type') == 'text' ? 'selected' : '' }}>{{ __('champs.text') }}</option>
+                                <option value="number" {{ old('type') == 'number' ? 'selected' : '' }}>{{ __('champs.number') }}</option>
+                                <option value="date" {{ old('type') == 'date' ? 'selected' : '' }}>{{ __('champs.date') }}</option>
+                                <option value="boolean" {{ old('type') == 'boolean' ? 'selected' : '' }}>{{ __('champs.boolean') }}</option>
+                            </select>
+                            @error('type')
+                                <div class="text-danger">{{ $message }}</div>
+                            @enderror
+                        </div>
+
+                        <div class="form-group">
+                            <label for="description" class="form-label">{{ __('champs.description') }}</label>
+                            <textarea name="description" id="description" rows="3" 
+                                      class="form-control">{{ old('description') }}</textarea>
+                            @error('description')
+                                <div class="text-danger">{{ $message }}</div>
+                            @enderror
+                        </div>
+
+                        <button type="submit" class="btn btn-primary">{{ __('champs.save') }}</button>
+                        <a href="{{ route('admin.champs.index') }}" class="btn btn-secondary">{{ __('champs.back_to_list') }}</a>
+                    </form>
+                </div>
+            </div>
         </div>
-
-        <div style="margin-bottom: 20px;">
-            <label style="display: block; margin-bottom: 8px; font-weight: 600;">Nom (Français) *</label>
-            <input type="text" name="nom_fr" value="{{ old('nom_fr') }}" 
-                   style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 6px;"
-                   required>
-            @error('nom_fr')
-                <div style="color: #dc3545; margin-top: 4px;">{{ $message }}</div>
-            @enderror
-        </div>
-
-        <div style="margin-bottom: 20px;">
-            <label style="display: block; margin-bottom: 8px; font-weight: 600;">Nom (Anglais)</label>
-            <input type="text" name="nom_en" value="{{ old('nom_en') }}" 
-                   style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 6px;">
-            @error('nom_en')
-                <div style="color: #dc3545; margin-top: 4px;">{{ $message }}</div>
-            @enderror
-        </div>
-
-        <div style="margin-bottom: 20px;">
-            <label style="display: block; margin-bottom: 8px; font-weight: 600;">Type *</label>
-            <select name="type" style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 6px;" required>
-                <option value="">Sélectionner un type</option>
-                <option value="text" {{ old('type') == 'text' ? 'selected' : '' }}>Texte</option>
-                <option value="number" {{ old('type') == 'number' ? 'selected' : '' }}>Nombre</option>
-                <option value="date" {{ old('type') == 'date' ? 'selected' : '' }}>Date</option>
-                <option value="boolean" {{ old('type') == 'boolean' ? 'selected' : '' }}>Booléen</option>
-            </select>
-            @error('type')
-                <div style="color: #dc3545; margin-top: 4px;">{{ $message }}</div>
-            @enderror
-        </div>
-
-        <div style="margin-bottom: 20px;">
-            <label style="display: block; margin-bottom: 8px; font-weight: 600;">Description</label>
-            <textarea name="description" rows="3" 
-                      style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 6px;">{{ old('description') }}</textarea>
-            @error('description')
-                <div style="color: #dc3545; margin-top: 4px;">{{ $message }}</div>
-            @enderror
-        </div>
-
-        <button type="submit" class="btn">Créer le champ</button>
-        <a href="{{ route('admin.champs.index') }}" class="btn btn-outline" style="margin-left: 10px;">Annuler</a>
-    </form>
+    </div>
 </div>
 @endsection
