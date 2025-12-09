@@ -1,1 +1,3 @@
-Nothing needs to be added to .gitignore for this change list, as it only contains a single HTML file addition without any build artifacts, dependencies, or temporary files.
+(red_black_auth_views.html is a source file, so no .gitignore rules needed)
+
+Nothing to output.

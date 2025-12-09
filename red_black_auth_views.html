@@ -1,0 +1,438 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Red & Black Theme with Auth</title>
+    <style>
+        :root {
+            --dark-red: #8B0000;
+            --red: #A52A2A;
+            --black: #000000;
+            --dark-gray: #1a1a1a;
+            --light-gray: #f4f4f4;
+            --sidebar-width: 250px;
+            --navbar-height: 60px;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Arial', sans-serif;
+        }
+
+        body {
+            background-color: #222;
+            color: white;
+            overflow-x: hidden;
+        }
+
+        /* Navbar Styles */
+        .navbar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: var(--navbar-height);
+            background-color: var(--dark-red);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 20px;
+            z-index: 1000;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
+        }
+
+        .navbar-brand {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: white;
+            text-decoration: none;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 20px;
+        }
+
+        .nav-links a {
+            color: white;
+            text-decoration: none;
+            padding: 8px 15px;
+            border-radius: 4px;
+            transition: background-color 0.3s;
+        }
+
+        .nav-links a:hover {
+            background-color: rgba(255, 255, 255, 0.1);
+        }
+
+        .auth-btn {
+            background-color: var(--red);
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        .auth-btn:hover {
+            background-color: #900000;
+        }
+
+        /* Sidebar Styles */
+        .sidebar {
+            position: fixed;
+            top: var(--navbar-height);
+            left: 0;
+            width: var(--sidebar-width);
+            height: calc(100vh - var(--navbar-height));
+            background-color: var(--dark-gray);
+            padding: 20px 0;
+            z-index: 999;
+            overflow-y: auto;
+        }
+
+        .sidebar-item {
+            padding: 12px 20px;
+            color: #ccc;
+            text-decoration: none;
+            display: block;
+            transition: all 0.3s;
+            border-left: 3px solid transparent;
+        }
+
+        .sidebar-item:hover, .sidebar-item.active {
+            background-color: rgba(139, 0, 0, 0.3);
+            color: white;
+            border-left: 3px solid var(--red);
+        }
+
+        /* Main Content Styles */
+        .main-content {
+            margin-top: var(--navbar-height);
+            margin-left: var(--sidebar-width);
+            padding: 20px;
+            min-height: calc(100vh - var(--navbar-height));
+        }
+
+        /* View Container Styles */
+        .view-container {
+            background-color: var(--dark-gray);
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+        }
+
+        .view-header {
+            color: var(--red);
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid var(--red);
+        }
+
+        .view-content {
+            line-height: 1.6;
+        }
+
+        /* Card Styles */
+        .card {
+            background-color: #333;
+            border-left: 4px solid var(--red);
+            border-radius: 4px;
+            padding: 15px;
+            margin: 10px 0;
+            color: white;
+        }
+
+        .card-header {
+            font-weight: bold;
+            color: var(--red);
+            margin-bottom: 8px;
+        }
+
+        /* Table Styles */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 15px 0;
+            background-color: #333;
+            border-radius: 4px;
+            overflow: hidden;
+        }
+
+        th, td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #444;
+        }
+
+        th {
+            background-color: var(--dark-red);
+            color: white;
+        }
+
+        tr:hover {
+            background-color: rgba(139, 0, 0, 0.2);
+        }
+
+        /* Form Styles */
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 5px;
+            color: #ddd;
+        }
+
+        input, select, textarea {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #444;
+            border-radius: 4px;
+            background-color: #333;
+            color: white;
+        }
+
+        button {
+            background-color: var(--red);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        button:hover {
+            background-color: #900000;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .sidebar {
+                width: 70px;
+            }
+            .sidebar-item span {
+                display: none;
+            }
+            .sidebar-item::before {
+                margin-right: 0;
+                text-align: center;
+            }
+            .main-content {
+                margin-left: 70px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navbar -->
+    <nav class="navbar">
+        <a href="#" class="navbar-brand">RedBlack App</a>
+        <div class="nav-links">
+            <a href="#">Home</a>
+            <a href="#">Dashboard</a>
+            <a href="#">Settings</a>
+            <a href="#">Help</a>
+        </div>
+        <button class="auth-btn" id="authButton">Login</button>
+    </nav>
+
+    <!-- Sidebar -->
+    <aside class="sidebar">
+        <a href="#" class="sidebar-item active">Dashboard</a>
+        <a href="#" class="sidebar-item">Users</a>
+        <a href="#" class="sidebar-item">Products</a>
+        <a href="#" class="sidebar-item">Orders</a>
+        <a href="#" class="sidebar-item">Analytics</a>
+        <a href="#" class="sidebar-item">Reports</a>
+        <a href="#" class="sidebar-item">Messages</a>
+        <a href="#" class="sidebar-item">Calendar</a>
+        <a href="#" class="sidebar-item">Files</a>
+        <a href="#" class="sidebar-item">Settings</a>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <!-- View 1: Dashboard -->
+        <div class="view-container">
+            <h2 class="view-header">Dashboard Overview</h2>
+            <div class="view-content">
+                <div class="card">
+                    <div class="card-header">System Status</div>
+                    <p>All systems operational. Last check: 2023-06-15 14:30:22</p>
+                </div>
+                
+                <div class="card">
+                    <div class="card-header">Recent Activity</div>
+                    <p>User JohnDoe logged in 5 minutes ago</p>
+                    <p>New order #ORD-2023-06-15-001 created</p>
+                </div>
+                
+                <table>
+                    <thead>
+                        <tr>
+                            <th>User</th>
+                            <th>Action</th>
+                            <th>Time</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>John Doe</td>
+                            <td>Login</td>
+                            <td>14:30</td>
+                            <td><span style="color: green;">Success</span></td>
+                        </tr>
+                        <tr>
+                            <td>Jane Smith</td>
+                            <td>Update Profile</td>
+                            <td>14:25</td>
+                            <td><span style="color: green;">Success</span></td>
+                        </tr>
+                        <tr>
+                            <td>Bob Johnson</td>
+                            <td>Order Creation</td>
+                            <td>14:20</td>
+                            <td><span style="color: orange;">Pending</span></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- View 2: User Management -->
+        <div class="view-container">
+            <h2 class="view-header">User Management</h2>
+            <div class="view-content">
+                <div class="form-group">
+                    <label for="userSearch">Search Users</label>
+                    <input type="text" id="userSearch" placeholder="Enter username or email...">
+                </div>
+                
+                <div class="card">
+                    <div class="card-header">Add New User</div>
+                    <form>
+                        <div class="form-group">
+                            <label for="userName">Full Name</label>
+                            <input type="text" id="userName" placeholder="Enter full name">
+                        </div>
+                        <div class="form-group">
+                            <label for="userEmail">Email</label>
+                            <input type="email" id="userEmail" placeholder="Enter email address">
+                        </div>
+                        <div class="form-group">
+                            <label for="userRole">Role</label>
+                            <select id="userRole">
+                                <option value="user">User</option>
+                                <option value="admin">Administrator</option>
+                                <option value="moderator">Moderator</option>
+                            </select>
+                        </div>
+                        <button type="submit">Create User</button>
+                    </form>
+                </div>
+                
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>Email</th>
+                            <th>Role</th>
+                            <th>Status</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>John Doe</td>
+                            <td>john@example.com</td>
+                            <td>Admin</td>
+                            <td><span style="color: green;">Active</span></td>
+                            <td>
+                                <button>Edit</button>
+                                <button style="background-color: #666;">Delete</button>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>Jane Smith</td>
+                            <td>jane@example.com</td>
+                            <td>User</td>
+                            <td><span style="color: green;">Active</span></td>
+                            <td>
+                                <button>Edit</button>
+                                <button style="background-color: #666;">Delete</button>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>Bob Johnson</td>
+                            <td>bob@example.com</td>
+                            <td>Moderator</td>
+                            <td><span style="color: orange;">Pending</span></td>
+                            <td>
+                                <button>Edit</button>
+                                <button style="background-color: #666;">Delete</button>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- View 3: Analytics -->
+        <div class="view-container">
+            <h2 class="view-header">Analytics</h2>
+            <div class="view-content">
+                <div class="card">
+                    <div class="card-header">Traffic Overview</div>
+                    <p>Total visitors: 1,248 this month</p>
+                    <p>Unique visitors: 987 this month</p>
+                    <p>Bounce rate: 32%</p>
+                </div>
+                
+                <div class="card">
+                    <div class="card-header">Top Pages</div>
+                    <ol>
+                        <li>Dashboard - 420 views</li>
+                        <li>Products - 380 views</li>
+                        <li>Settings - 210 views</li>
+                        <li>Users - 180 views</li>
+                        <li>Reports - 150 views</li>
+                    </ol>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        // Toggle auth button text
+        document.getElementById('authButton').addEventListener('click', function() {
+            const btn = this;
+            if (btn.textContent === 'Login') {
+                btn.textContent = 'Logout';
+                btn.style.backgroundColor = '#006400';
+            } else {
+                btn.textContent = 'Login';
+                btn.style.backgroundColor = '';
+            }
+        });
+
+        // Add active class to sidebar items when clicked
+        const sidebarItems = document.querySelectorAll('.sidebar-item');
+        sidebarItems.forEach(item => {
+            item.addEventListener('click', function(e) {
+                e.preventDefault();
+                sidebarItems.forEach(i => i.classList.remove('active'));
+                this.classList.add('active');
+            });
+        });
+    </script>
+</body>
+</html>
