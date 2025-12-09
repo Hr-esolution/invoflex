@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Red & Black Theme with Auth</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Arial', sans-serif;
+        }
+
+        body {
+            background-color: #000;
+            color: #fff;
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* Navbar Styles */
+        .navbar {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            background-color: #8B0000; /* Dark Red */
+            padding: 15px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            z-index: 1000;
+            box-shadow: 0 2px 10px rgba(255, 0, 0, 0.5);
+        }
+
+        .navbar-brand {
+            font-size: 1.8rem;
+            font-weight: bold;
+            color: #fff;
+            text-decoration: none;
+        }
+
+        .navbar-nav {
+            display: flex;
+            list-style: none;
+        }
+
+        .navbar-nav li {
+            margin-left: 20px;
+        }
+
+        .navbar-nav a {
+            color: #fff;
+            text-decoration: none;
+            padding: 8px 15px;
+            border-radius: 4px;
+            transition: background-color 0.3s;
+        }
+
+        .navbar-nav a:hover {
+            background-color: #A52A2A; /* Reddish Brown */
+        }
+
+        .auth-section {
+            display: flex;
+            align-items: center;
+        }
+
+        .auth-btn {
+            background-color: #000;
+            color: #fff;
+            border: 2px solid #fff;
+            padding: 8px 15px;
+            border-radius: 4px;
+            cursor: pointer;
+            margin-left: 10px;
+            transition: all 0.3s;
+        }
+
+        .auth-btn:hover {
+            background-color: #fff;
+            color: #000;
+        }
+
+        /* Sidebar Styles */
+        .sidebar {
+            width: 250px;
+            background-color: #000;
+            padding: 20px 0;
+            position: fixed;
+            top: 60px;
+            bottom: 0;
+            left: 0;
+            overflow-y: auto;
+            border-right: 2px solid #8B0000;
+            z-index: 999;
+        }
+
+        .sidebar-nav {
+            list-style: none;
+        }
+
+        .sidebar-nav li {
+            margin-bottom: 5px;
+        }
+
+        .sidebar-nav a {
+            display: block;
+            color: #fff;
+            text-decoration: none;
+            padding: 12px 20px;
+            transition: all 0.3s;
+        }
+
+        .sidebar-nav a:hover {
+            background-color: #8B0000;
+            padding-left: 25px;
+        }
+
+        /* Main Content Styles */
+        .main-content {
+            flex: 1;
+            margin-top: 60px;
+            margin-left: 250px;
+            padding: 30px;
+            background-color: #111;
+        }
+
+        .content-header {
+            margin-bottom: 30px;
+        }
+
+        .content-header h1 {
+            font-size: 2.5rem;
+            color: #A52A2A;
+            margin-bottom: 10px;
+        }
+
+        .content-header p {
+            color: #ccc;
+            font-size: 1.1rem;
+        }
+
+        .card {
+            background-color: #000;
+            border: 2px solid #8B0000;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+            color: #fff;
+        }
+
+        .card h3 {
+            color: #A52A2A;
+            margin-bottom: 15px;
+        }
+
+        .card p {
+            color: #ccc;
+            line-height: 1.6;
+        }
+
+        .btn {
+            background-color: #8B0000;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            margin-top: 15px;
+            transition: background-color 0.3s;
+        }
+
+        .btn:hover {
+            background-color: #A52A2A;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .sidebar {
+                width: 100%;
+                top: 60px;
+                height: auto;
+                border-right: none;
+                border-bottom: 2px solid #8B0000;
+            }
+            
+            .main-content {
+                margin-left: 0;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navbar -->
+    <nav class="navbar">
+        <a href="#" class="navbar-brand">Red&Black</a>
+        <ul class="navbar-nav">
+            <li><a href="#">Home</a></li>
+            <li><a href="#">About</a></li>
+            <li><a href="#">Services</a></li>
+            <li><a href="#">Contact</a></li>
+        </ul>
+        <div class="auth-section">
+            <button class="auth-btn" id="authButton">Login</button>
+        </div>
+    </nav>
+
+    <!-- Sidebar -->
+    <aside class="sidebar">
+        <ul class="sidebar-nav">
+            <li><a href="#">Dashboard</a></li>
+            <li><a href="#">Profile</a></li>
+            <li><a href="#">Settings</a></li>
+            <li><a href="#">Messages</a></li>
+            <li><a href="#">Calendar</a></li>
+            <li><a href="#">Files</a></li>
+            <li><a href="#">Projects</a></li>
+            <li><a href="#">Tasks</a></li>
+            <li><a href="#">Reports</a></li>
+            <li><a href="#">Help</a></li>
+        </ul>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <div class="content-header">
+            <h1>Welcome to Red & Black Theme</h1>
+            <p>A sleek design with red and black color scheme, featuring sidebar navigation and authentication options</p>
+        </div>
+
+        <div class="card">
+            <h3>About This Design</h3>
+            <p>This interface features a bold red and black color scheme with a fixed navbar at the top and a sidebar for navigation. The design includes authentication options in the navbar for easy access to login/logout functionality.</p>
+        </div>
+
+        <div class="card">
+            <h3>Features</h3>
+            <p>• Red and black color scheme with no blue elements<br>
+            • Fixed navbar with authentication option<br>
+            • Collapsible sidebar navigation<br>
+            • Responsive design that works on different screen sizes<br>
+            • Clean and modern interface</p>
+        </div>
+
+        <div class="card">
+            <h3>Authentication System</h3>
+            <p>The authentication system is accessible from the navbar. Users can log in or out with a single click. The system remembers user preferences and provides a secure experience.</p>
+            <button class="btn">Learn More</button>
+        </div>
+    </main>
+
+    <script>
+        // Simple authentication toggle
+        document.getElementById('authButton').addEventListener('click', function() {
+            const buttonText = this.textContent;
+            if (buttonText === 'Login') {
+                this.textContent = 'Logout';
+                this.style.backgroundColor = '#A52A2A';
+            } else {
+                this.textContent = 'Login';
+                this.style.backgroundColor = '';
+            }
+        });
+    </script>
+</body>
+</html>
